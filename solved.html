@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somme des valeurs d'étalonnage</title>
+    <author>Oussama Kefi | kyrix.dev</author>
+</head>
+<body>
+    <h1>Lecture des lignes depuis un fichier</h1>
+    <input type="file" id="fileInput" accept=".txt">
+    <button id="processFile">Calculer</button>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById("processFile").addEventListener("click", () => {
+            const fileInput = document.getElementById("fileInput");
+            const output = document.getElementById("output");
+
+            if (fileInput.files.length === 0) {
+                alert("Veuillez sélectionner un fichier.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const content = event.target.result;
+                const lignes = content.split("\n").map(ligne => ligne.trim());
+
+                const sommeTotale = calculerValeurEtalonnage(lignes);
+
+                output.textContent = `La somme des valeurs d'étalonnage est : ${sommeTotale}`;
+            };
+
+            reader.readAsText(file);
+        });
+
+        function calculerValeurEtalonnage(lignes) {
+            let sommeTotale = 0;
+
+            lignes.forEach(ligne => {
+                const premierChiffre = ligne.match(/\d/);
+                const dernierChiffre = ligne.match(/\d(?=[^\d]*$)/);
+
+                if (premierChiffre && dernierChiffre) {
+                    const valeur = parseInt(`${premierChiffre[0]}${dernierChiffre[0]}`, 10);
+                    sommeTotale += valeur;
+                }
+            });
+
+            return sommeTotale;
+        }
+    </script>
+</body>
+</html>
